@@ -39,7 +39,8 @@ async fn main() {
         });
     }
 
-    let mut frame_index = 0;
+    let mut frame_index: usize = 0;
+    let mut elapsed_time: f32 = 0.;
     loop {
         clear_background(WHITE);
         let animation_frame = frames.get(frame_index).unwrap();
@@ -50,12 +51,16 @@ async fn main() {
             WHITE,
             DrawTextureParams::default(),
         );
-        frame_index = if frame_index == frames.len() - 1 {
-            0
-        } else {
-            frame_index + 1
-        };
 
+        elapsed_time += get_frame_time();
+        if elapsed_time > animation_frame.delay {
+            frame_index = if frame_index == frames.len() - 1 {
+                0
+            } else {
+                frame_index + 1
+            };
+            elapsed_time = 0.0;
+        }
         next_frame().await
     }
 }
