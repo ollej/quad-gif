@@ -1,4 +1,5 @@
 use macroquad::prelude::*;
+use rgb::ComponentBytes;
 use std::fs::File;
 
 #[derive(Debug)]
@@ -14,18 +15,25 @@ async fn main() {
     //    .expect("Couldn't load file");
     let input = File::open("animation.gif").unwrap();
     let mut options = gif::DecodeOptions::new();
-    options.set_color_output(gif::ColorOutput::RGBA);
+    options.set_color_output(gif::ColorOutput::Indexed);
     let mut decoder = options.read_info(input).unwrap();
+    let mut screen = gif_dispose::Screen::new_decoder(&decoder);
 
-    let image_width = decoder.width() as u32;
-    let image_height = decoder.height() as u32;
+    let image_width = decoder.width() as u16;
+    let image_height = decoder.height() as u16;
     let orig_x = screen_width() / 2. - image_width as f32 / 2.;
     let orig_y = screen_height() / 2. - image_height as f32 / 2.;
 
     let mut frames: Vec<AnimationFrame> = Vec::new();
     while let Some(frame) = decoder.read_next_frame().unwrap() {
+        screen.blit_frame(&frame).expect("Couldn't blit frame");
+        let (pixels, frame_width, frame_height) = screen.pixels.as_contiguous_buf();
         frames.push(AnimationFrame {
-            texture: Texture2D::from_rgba8(frame.width, frame.height, &frame.buffer),
+            texture: Texture2D::from_rgba8(
+                frame_width as u16,
+                frame_height as u16,
+                pixels.as_bytes(),
+            ),
             delay: frame.delay as f32 / 100.,
         });
     }
