@@ -25,10 +25,8 @@ async fn main() {
     let mut decoder = options.read_info(&*gif).unwrap();
     let mut screen = gif_dispose::Screen::new_decoder(&decoder);
 
-    let image_width = decoder.width() as u16;
-    let image_height = decoder.height() as u16;
-    let orig_x = screen_width() / 2. - image_width as f32 / 2.;
-    let orig_y = screen_height() / 2. - image_height as f32 / 2.;
+    let orig_x = screen_width() / 2. - decoder.width() as f32 / 2.;
+    let orig_y = screen_height() / 2. - decoder.height() as f32 / 2.;
 
     let mut frames: Vec<AnimationFrame> = Vec::new();
     while let Some(frame) = decoder.read_next_frame().unwrap() {
@@ -48,6 +46,11 @@ async fn main() {
     let mut elapsed_time: f32 = 0.;
     set_default_camera();
     loop {
+        #[cfg(not(target_arch = "wasm32"))]
+        if is_key_pressed(KeyCode::Q) | is_key_pressed(KeyCode::Escape) {
+            break;
+        }
+
         clear_background(WHITE);
         let animation_frame = frames.get(frame_index).unwrap();
         draw_texture_ex(
