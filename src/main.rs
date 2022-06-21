@@ -7,7 +7,15 @@ struct AnimationFrame {
     delay: f32,
 }
 
-#[macroquad::main("quad-gif")]
+fn window_conf() -> Conf {
+    Conf {
+        window_title: "quad-gif".to_owned(),
+        fullscreen: true,
+        ..Default::default()
+    }
+}
+
+#[macroquad::main(window_conf)]
 async fn main() {
     let gif = load_file("animation.gif")
         .await
