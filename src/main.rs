@@ -1,6 +1,5 @@
 use macroquad::prelude::*;
 use rgb::ComponentBytes;
-use std::fs::File;
 
 #[derive(Debug)]
 struct AnimationFrame {
@@ -10,13 +9,12 @@ struct AnimationFrame {
 
 #[macroquad::main("quad-gif")]
 async fn main() {
-    //let input = load_file("animation.gif")
-    //    .await
-    //    .expect("Couldn't load file");
-    let input = File::open("animation.gif").unwrap();
+    let gif = load_file("animation.gif")
+        .await
+        .expect("Couldn't load file");
     let mut options = gif::DecodeOptions::new();
     options.set_color_output(gif::ColorOutput::Indexed);
-    let mut decoder = options.read_info(input).unwrap();
+    let mut decoder = options.read_info(&*gif).unwrap();
     let mut screen = gif_dispose::Screen::new_decoder(&decoder);
 
     let image_width = decoder.width() as u16;
