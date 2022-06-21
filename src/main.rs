@@ -1,15 +1,10 @@
 use macroquad::prelude::*;
 use std::fs::File;
 
+#[derive(Debug)]
 struct AnimationFrame {
-    image: Image,
+    texture: Texture2D,
     delay: f32,
-}
-
-impl AnimationFrame {
-    fn texture(&self) -> Texture2D {
-        Texture2D::from_image(&self.image)
-    }
 }
 
 #[macroquad::main("quad-gif")]
@@ -22,30 +17,27 @@ async fn main() {
     options.set_color_output(gif::ColorOutput::RGBA);
     let mut decoder = options.read_info(input).unwrap();
 
-    let orig_x = screen_width() / 2. - decoder.width() as f32 / 2.;
-    let orig_y = screen_height() / 2. - decoder.height() as f32 / 2.;
+    let image_width = decoder.width() as u32;
+    let image_height = decoder.height() as u32;
+    let orig_x = screen_width() / 2. - image_width as f32 / 2.;
+    let orig_y = screen_height() / 2. - image_height as f32 / 2.;
 
     let mut frames: Vec<AnimationFrame> = Vec::new();
     while let Some(frame) = decoder.read_next_frame().unwrap() {
-        // TODO: Care about disposal method
-        let frame_image = Image {
-            bytes: frame.buffer.to_vec(),
-            width: frame.width,
-            height: frame.height,
-        };
         frames.push(AnimationFrame {
-            image: frame_image,
+            texture: Texture2D::from_rgba8(frame.width, frame.height, &frame.buffer),
             delay: frame.delay as f32 / 100.,
         });
     }
 
     let mut frame_index: usize = 0;
     let mut elapsed_time: f32 = 0.;
+    set_default_camera();
     loop {
         clear_background(WHITE);
         let animation_frame = frames.get(frame_index).unwrap();
         draw_texture_ex(
-            animation_frame.texture(),
+            animation_frame.texture,
             orig_x,
             orig_y,
             WHITE,
