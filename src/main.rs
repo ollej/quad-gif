@@ -63,7 +63,6 @@ impl GifAnimation {
     }
 
     fn draw_at(&self, pos_x: f32, pos_y: f32) {
-        clear_background(WHITE);
         draw_texture_ex(
             self.frame().texture,
             pos_x,
@@ -131,6 +130,7 @@ async fn main() {
             break;
         }
 
+        clear_background(WHITE);
         gif.draw();
         gif.tick();
 
