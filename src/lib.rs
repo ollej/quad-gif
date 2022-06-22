@@ -1,3 +1,25 @@
+//! Simple crate to load and draw a GIF animation using Macroquad.
+//!
+//! The animation will loop forever, regardless of how many iterations are set in
+//! the file.
+//!
+//! ```rust
+//! use macroquad::prelude::*;
+//! use quad_gif;
+//!
+//! #[macroquad::main("quad-gif")]
+//! async fn main() {
+//!     let mut animation = quad_gif::GifAnimation::load("animation.gif").await;
+//!
+//!     clear_background(WHITE);
+//!     loop {
+//!         animation.draw();
+//!         animation.tick();
+//!         next_frame().await
+//!     }
+//! }
+//! ```
+
 use macroquad::prelude::*;
 use rgb::ComponentBytes;
 
@@ -22,6 +44,11 @@ impl GifAnimation {
         }
     }
 
+    /// Load and decode a GIF file using Macroquad.
+    ///
+    /// ```rust
+    /// let mut gif_animation = GifAnimation::load("filename.gif").await;
+    /// ```
     pub async fn load(filename: String) -> Self {
         let file_bytes = load_file(&filename).await.expect("Couldn't load file");
         let (frames, width, height) = Self::decode_gif(&file_bytes);
@@ -58,10 +85,20 @@ impl GifAnimation {
         screen_height() / 2. - self.height as f32 / 2.
     }
 
+    /// Draw the texture of the current frame at the middle of the screen.
+    ///
+    /// ```rust
+    /// gif_animation.draw();
+    /// ```
     pub fn draw(&self) {
         self.draw_at(self.pos_x(), self.pos_y());
     }
 
+    /// Draw the texture of the current frame at given X/Y position.
+    ///
+    /// ```rust
+    /// gif_animation.draw_at(42.0, 47.0);
+    /// ```
     pub fn draw_at(&self, pos_x: f32, pos_y: f32) {
         draw_texture_ex(
             self.frame().texture,
@@ -72,6 +109,12 @@ impl GifAnimation {
         );
     }
 
+    /// Update method that needs to be called in the loop to
+    /// advance to next frame when necessary.
+    ///
+    /// ```rust
+    /// gif_animation.tick();
+    /// ```
     pub fn tick(&mut self) {
         if !self.paused {
             self.elapsed_time += get_frame_time();
@@ -81,6 +124,11 @@ impl GifAnimation {
         }
     }
 
+    /// Toggle whether the animation should be playing or be paused.
+    ///
+    /// ```rust
+    /// gif_animation.toggle_paused();
+    /// ```
     pub fn toggle_paused(&mut self) {
         self.paused ^= true;
     }
@@ -99,6 +147,9 @@ impl GifAnimation {
     }
 }
 
+/// Struct for a single frame. Contains the texture to draw,
+/// and a delay for how many seconds the frame should show before
+/// advancing to the next frame.
 #[derive(Debug)]
 pub struct AnimationFrame {
     texture: Texture2D,

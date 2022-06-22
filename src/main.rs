@@ -32,6 +32,14 @@ fn explain_usage() -> ! {
     process::exit(1)
 }
 
+/// Binary to display a looping GIF animation.
+///
+/// The filename is required, except in debug, where it defaults to `animation.gif`.
+///
+/// quad-gif 0.2.0
+/// Display a GIF file.
+///
+/// Usage: quad-gif <file>
 #[macroquad::main(window_conf)]
 async fn main() {
     let mut animation = quad_gif::GifAnimation::load(get_filename()).await;
