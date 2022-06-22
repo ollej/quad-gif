@@ -23,16 +23,23 @@
 use macroquad::prelude::*;
 use rgb::ComponentBytes;
 
+/// Struct containing textures to display every frame.
 pub struct GifAnimation {
     frames: Vec<AnimationFrame>,
-    width: u16,
-    height: u16,
+    pub width: u16,
+    pub height: u16,
     current_frame: usize,
     elapsed_time: f32,
     paused: bool,
 }
 
 impl GifAnimation {
+    /// Instantiate with a vector of [`AnimationFrame`], width and height.
+    ///
+    /// Can be used to create an animation from your own textures instead
+    /// of loading a GIF file.
+    ///
+    /// [`AnimationFrame`]: struct.AnimationFrame
     pub fn new(frames: Vec<AnimationFrame>, width: u16, height: u16) -> Self {
         Self {
             frames,
@@ -51,6 +58,16 @@ impl GifAnimation {
     /// ```
     pub async fn load(filename: String) -> Self {
         let file_bytes = load_file(&filename).await.expect("Couldn't load file");
+        Self::from_gif_bytes(&file_bytes)
+    }
+
+    /// Instantiate a new `GifAnimation` from bytes.
+    ///
+    /// ```rust
+    /// let bytes: [u8] = ...
+    /// let mut gif_animation = GifAnimation::from_gif_bytes(&bytes);
+    /// ```
+    pub fn from_gif_bytes(file_bytes: &[u8]) -> GifAnimation {
         let (frames, width, height) = Self::decode_gif(&file_bytes);
         GifAnimation::new(frames, width, height)
     }
