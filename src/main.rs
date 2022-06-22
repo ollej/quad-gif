@@ -116,7 +116,7 @@ fn window_conf() -> Conf {
     }
 }
 
-fn read_filename() -> String {
+fn get_filename() -> String {
     env::args().nth(1).unwrap_or_else(|| default_filename())
 }
 
@@ -138,7 +138,7 @@ fn explain_usage() -> ! {
 
 #[macroquad::main(window_conf)]
 async fn main() {
-    let mut animation = GifAnimation::load(read_filename()).await;
+    let mut animation = GifAnimation::load(get_filename()).await;
 
     loop {
         #[cfg(not(target_arch = "wasm32"))]
