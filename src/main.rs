@@ -10,6 +10,7 @@ pub struct GifAnimation {
     height: u16,
     current_frame: usize,
     elapsed_time: f32,
+    paused: bool,
 }
 
 impl GifAnimation {
@@ -20,6 +21,7 @@ impl GifAnimation {
             height,
             current_frame: 0,
             elapsed_time: 0.,
+            paused: false,
         }
     }
 
@@ -74,10 +76,16 @@ impl GifAnimation {
     }
 
     fn tick(&mut self) {
-        self.elapsed_time += get_frame_time();
-        if self.elapsed_time > self.frame().delay {
-            self.advance_frame();
+        if !self.paused {
+            self.elapsed_time += get_frame_time();
+            if self.elapsed_time > self.frame().delay {
+                self.advance_frame();
+            }
         }
+    }
+
+    fn toggle_paused(&mut self) {
+        self.paused ^= true;
     }
 
     fn frame(&self) -> &AnimationFrame {
@@ -130,17 +138,20 @@ fn explain_usage() -> ! {
 
 #[macroquad::main(window_conf)]
 async fn main() {
-    let mut gif = GifAnimation::load(read_filename()).await;
+    let mut animation = GifAnimation::load(read_filename()).await;
 
     loop {
         #[cfg(not(target_arch = "wasm32"))]
         if is_key_pressed(KeyCode::Q) | is_key_pressed(KeyCode::Escape) {
             break;
         }
+        if is_key_pressed(KeyCode::P) | is_key_pressed(KeyCode::Space) {
+            animation.toggle_paused();
+        }
 
         clear_background(WHITE);
-        gif.draw();
-        gif.tick();
+        animation.draw();
+        animation.tick();
 
         next_frame().await
     }
