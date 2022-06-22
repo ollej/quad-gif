@@ -75,17 +75,21 @@ impl GifAnimation {
     fn tick(&mut self) {
         self.elapsed_time += get_frame_time();
         if self.elapsed_time > self.frame().delay {
-            self.current_frame = if self.current_frame == self.frames.len() - 1 {
-                0
-            } else {
-                self.current_frame + 1
-            };
-            self.elapsed_time = 0.0;
+            self.advance_frame();
         }
     }
 
     fn frame(&self) -> &AnimationFrame {
         self.frames.get(self.current_frame).unwrap()
+    }
+
+    fn advance_frame(&mut self) {
+        self.current_frame = if self.current_frame == self.frames.len() - 1 {
+            0
+        } else {
+            self.current_frame + 1
+        };
+        self.elapsed_time = 0.0;
     }
 }
 
@@ -123,7 +127,6 @@ fn explain_usage() -> ! {
 async fn main() {
     let mut gif = GifAnimation::load(read_filename()).await;
 
-    set_default_camera();
     loop {
         #[cfg(not(target_arch = "wasm32"))]
         if is_key_pressed(KeyCode::Q) | is_key_pressed(KeyCode::Escape) {
