@@ -5,7 +5,7 @@ Display GIF animations with Macroquad.
 ## Usage
 
 ```
-quad-gif 0.1.0
+quad-gif 0.2.0
 Display a GIF file.
 
 Usage: quad-gif <file>

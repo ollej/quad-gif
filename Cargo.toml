@@ -1,10 +1,18 @@
 [package]
 name = "quad-gif"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 
 [dependencies]
-macroquad = "0.3"
+macroquad = "0.3.20"
 gif = "0.11.3"
 gif-dispose = "3.1.1"
 rgb = "0.8.33"
+
+[lib]
+name = "quad_gif"
+path = "src/lib.rs"
+
+[[bin]]
+name = "quad-gif"
+path = "src/main.rs"
