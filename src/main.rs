@@ -1,7 +1,8 @@
 use macroquad::prelude::*;
 use rgb::ComponentBytes;
+use std::env;
 #[cfg(not(debug_assertions))]
-use std::{env, process};
+use std::process;
 
 pub struct GifAnimation {
     frames: Vec<AnimationFrame>,
@@ -107,14 +108,18 @@ fn window_conf() -> Conf {
     }
 }
 
-#[cfg(debug_assertions)]
 fn read_filename() -> String {
+    env::args().nth(1).unwrap_or_else(|| default_filename())
+}
+
+#[cfg(debug_assertions)]
+fn default_filename() -> String {
     "animation.gif".to_string()
 }
 
 #[cfg(not(debug_assertions))]
-fn read_filename() -> String {
-    env::args().nth(1).unwrap_or_else(|| explain_usage())
+fn default_filename() -> String {
+    explain_usage()
 }
 
 #[cfg(not(debug_assertions))]
