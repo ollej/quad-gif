@@ -26,7 +26,7 @@ use quad_gif;
 
 #[macroquad::main("quad-gif")]
 async fn main() {
-    let mut animation = quad_gif::GifAnimation::load("animation.gif").await;
+    let mut animation = quad_gif::GifAnimation::load("animation.gif".to_string()).await;
 
     clear_background(WHITE);
     loop {
