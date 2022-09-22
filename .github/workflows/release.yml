@@ -6,7 +6,7 @@ on:
       - 'v*'
 
 jobs:
-  publish:
+  build:
     name: Release for ${{ matrix.config.target }} / ${{ matrix.config.os }}
     runs-on: ${{ matrix.config.os }}
     strategy:
@@ -39,6 +39,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - uses: Swatinem/rust-cache@v2
       - name: Install packages (Linux)
         if: runner.os == 'Linux'
         run: |
@@ -62,13 +63,13 @@ jobs:
           args: --release --locked --all-targets --target=${{ matrix.config.target }}
       - name: Zip release archive
         if: matrix.config.target == 'wasm32-unknown-unknown'
-        run: zip -j ${{ matrix.config.zip_file }} demo/*.js demo/*.html target/${{ matrix.config.target }}/release/${{ matrix.config.artifact_name }}
+        run: zip --move -j ${{ matrix.config.zip_file }} demo/*.js demo/*.html target/${{ matrix.config.target }}/release/${{ matrix.config.artifact_name }}
       - name: Zip release archive
         if: matrix.config.target == 'x86_64-unknown-linux-gnu'
-        run: tar -zcf ${{ matrix.config.zip_file }} -C target/${{ matrix.config.target }}/release/ ${{ matrix.config.artifact_name }}
+        run: tar --remove-files -zcf ${{ matrix.config.zip_file }} -C target/${{ matrix.config.target }}/release/ ${{ matrix.config.artifact_name }}
       - name: Zip release archive
         if: runner.os == 'Windows' || runner.os == 'macOS'
-        run: 7z a -tzip ${{ matrix.config.zip_file }} ./target/${{ matrix.config.target }}/release/${{ matrix.config.artifact_name }}
+        run: 7z a -sdel -tzip ${{ matrix.config.zip_file }} ./target/${{ matrix.config.target }}/release/${{ matrix.config.artifact_name }}
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
@@ -76,3 +77,25 @@ jobs:
           file: ${{ matrix.config.zip_file }}
           asset_name: ${{ matrix.config.asset_name }}
           tag: ${{ github.ref }}
+      - name: Remove packaged zip file after upload
+        uses: JesseTG/rm@v1.0.3
+        with:
+          path: ${{ matrix.config.zip_file }}
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v2
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+      - name: Publish release to crates.io
+        uses: katyo/publish-crates@v1
+        with:
+          registry-token: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          args: --allow-dirty
+          check-repo: false
+          ignore-unpublished-changes: true
