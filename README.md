@@ -1,6 +1,6 @@
 # quad-gif
 
-[![Cross-compile](https://github.com/ollej/quad-gif/actions/workflows/crosscompile.yml/badge.svg)](https://github.com/ollej/quad-gif/actions/workflows/crosscompile.yml) ![Crates.io](https://img.shields.io/crates/v/quad-gif) ![docs.rs](https://img.shields.io/docsrs/quad-gif) ![Crates.io](https://img.shields.io/crates/l/quad-gif)
+[![Cross-compile](https://github.com/ollej/quad-gif/actions/workflows/crosscompile.yml/badge.svg)](https://github.com/ollej/quad-gif/actions/workflows/crosscompile.yml) [![Crates.io](https://img.shields.io/crates/v/quad-gif)](https://crates.io/crates/quad-gif) [![docs.rs](https://img.shields.io/docsrs/quad-gif)](https://docs.rs/quad-gif/latest/quad_gif/) [![Crates.io](https://img.shields.io/crates/l/quad-gif)](https://opensource.org/licenses/MIT)
 
 Display looping GIF animations with Macroquad.
 
