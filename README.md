@@ -1,9 +1,13 @@
 # quad-gif
 
+[![Cross-compile](https://github.com/ollej/quad-gif/actions/workflows/crosscompile.yml/badge.svg)](https://github.com/ollej/quad-gif/actions/workflows/crosscompile.yml) ![Crates.io](https://img.shields.io/crates/v/quad-gif) ![docs.rs](https://img.shields.io/docsrs/quad-gif) ![Crates.io](https://img.shields.io/crates/l/quad-gif)
+
 Display looping GIF animations with Macroquad.
 
 The animation will loop forever, regardless of how many iterations are set in
 the file.
+
+[Documentation](https://docs.rs/quad-gif/latest/quad_gif/) on docs.rs
 
 ## Usage
 
