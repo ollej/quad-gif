@@ -16,6 +16,14 @@ gif = "0.11.4"
 gif-dispose = "3.1.1"
 rgb = "0.8.34"
 
+[profile.dev]
+debug = 1 # less precise locations
+
+# Doesn't work with android build
+[profile.dev.package.'*']
+debug = false # no debug symbols for deps
+opt-level = 2
+
 [profile.release]
 opt-level = 'z'
 lto = true
