@@ -37,3 +37,5 @@ jobs:
         with:
           command: build
           args: --all-targets --locked
+      - name: Machete
+        uses: bnjbvr/cargo-machete@main
