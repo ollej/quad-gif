@@ -14,7 +14,7 @@ the file.
 There is a binary file included that can be used to show a GIF file.
 
 ```
-quad-gif 0.2.0
+quad-gif 0.3.0
 Display a GIF file.
 
 Usage: quad-gif <file>
