@@ -1,7 +1,7 @@
 [package]
 name = "quad-gif"
-version = "0.2.0"
-edition = "2021"
+version = "0.3.0"
+edition = "2024"
 license = "MIT"
 description = "Display GIF animations with Macroquad."
 homepage = "https://github.com/ollej/quad-gif"
