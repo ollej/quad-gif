@@ -169,6 +169,6 @@ impl GifAnimation {
 /// advancing to the next frame.
 #[derive(Debug)]
 pub struct AnimationFrame {
-    texture: Texture2D,
-    delay: f32,
+    pub texture: Texture2D,
+    pub delay: f32,
 }
