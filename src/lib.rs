@@ -25,10 +25,10 @@ use rgb::ComponentBytes;
 
 /// Struct containing textures to display every frame.
 pub struct GifAnimation {
-    frames: Vec<AnimationFrame>,
+    pub frames: Vec<AnimationFrame>,
     pub width: u16,
     pub height: u16,
-    current_frame: usize,
+    pub current_frame: usize,
     elapsed_time: f32,
     paused: bool,
 }
@@ -150,7 +150,7 @@ impl GifAnimation {
         self.paused ^= true;
     }
 
-    fn frame(&self) -> &AnimationFrame {
+    pub fn frame(&self) -> &AnimationFrame {
         self.frames.get(self.current_frame).unwrap()
     }
 
