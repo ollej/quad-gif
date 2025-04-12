@@ -118,7 +118,7 @@ impl GifAnimation {
     /// ```
     pub fn draw_at(&self, pos_x: f32, pos_y: f32) {
         draw_texture_ex(
-            self.frame().texture,
+            &self.frame().texture,
             pos_x,
             pos_y,
             WHITE,
