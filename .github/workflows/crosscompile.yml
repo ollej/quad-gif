@@ -22,20 +22,15 @@ jobs:
             packages: pkg-config libx11-dev libxi-dev libgl1-mesa-dev libasound2-dev gcc-mingw-w64
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Install packages (Linux)
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get -yq --no-install-suggests --no-install-recommends install ${{ matrix.packages }}
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-      - uses: Swatinem/rust-cache@v2
-      - uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --all-targets
+      - name: Output rust version
+        run: rustup --version
+      - name: Build binaries
+        run: cargo build --release --all-targets
       - name: Machete
         uses: bnjbvr/cargo-machete@main
