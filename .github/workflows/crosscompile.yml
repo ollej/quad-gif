@@ -36,6 +36,6 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --all-targets --locked
+          args: --all-targets --offline
       - name: Machete
         uses: bnjbvr/cargo-machete@main

@@ -60,7 +60,7 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --release --locked --all-targets --target=${{ matrix.config.target }}
+          args: --release --offline --all-targets --target=${{ matrix.config.target }}
       - name: Zip release archive
         if: matrix.config.target == 'wasm32-unknown-unknown'
         run: zip --move -j ${{ matrix.config.zip_file }} demo/*.js demo/*.html target/${{ matrix.config.target }}/release/${{ matrix.config.artifact_name }}
