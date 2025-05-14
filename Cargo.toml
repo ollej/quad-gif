@@ -11,7 +11,7 @@ keywords = ["graphics", "image", "gif", "animation", "macroquad"]
 categories = ["command-line-utilities", "graphics", "multimedia::images", "rendering"]
 
 [dependencies]
-macroquad = { version = "0.3.24", default-features = false }
+macroquad = { version = "0.4", default-features = false }
 gif = "0.11.4"
 gif-dispose = "3.1.1"
 rgb = "0.8.34"

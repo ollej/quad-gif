@@ -25,10 +25,10 @@ use rgb::ComponentBytes;
 
 /// Struct containing textures to display every frame.
 pub struct GifAnimation {
-    frames: Vec<AnimationFrame>,
+    pub frames: Vec<AnimationFrame>,
     pub width: u16,
     pub height: u16,
-    current_frame: usize,
+    pub current_frame: usize,
     elapsed_time: f32,
     paused: bool,
 }
@@ -118,7 +118,7 @@ impl GifAnimation {
     /// ```
     pub fn draw_at(&self, pos_x: f32, pos_y: f32) {
         draw_texture_ex(
-            self.frame().texture,
+            &self.frame().texture,
             pos_x,
             pos_y,
             WHITE,
@@ -150,7 +150,7 @@ impl GifAnimation {
         self.paused ^= true;
     }
 
-    fn frame(&self) -> &AnimationFrame {
+    pub fn frame(&self) -> &AnimationFrame {
         self.frames.get(self.current_frame).unwrap()
     }
 
@@ -169,6 +169,6 @@ impl GifAnimation {
 /// advancing to the next frame.
 #[derive(Debug)]
 pub struct AnimationFrame {
-    texture: Texture2D,
-    delay: f32,
+    pub texture: Texture2D,
+    pub delay: f32,
 }
