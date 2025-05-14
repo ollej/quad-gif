@@ -14,10 +14,10 @@ the file.
 There is a binary file included that can be used to show a GIF file.
 
 ```
-quad-gif 0.4.0
+quad_gif 0.4.0
 Display a GIF file.
 
-Usage: quad-gif <file>
+Usage: quad_gif <file>
 ```
 
 ## API usage
