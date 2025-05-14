@@ -14,22 +14,22 @@ jobs:
       matrix:
         config:
           - os: ubuntu-latest
-            artifact_name: quad-gif
+            artifact_name: quad_gif
             zip_file: quad-gif-linux.tar.gz
             asset_name: quad-gif-linux-$tag.tar.gz
             target: 'x86_64-unknown-linux-gnu'
           - os: windows-latest
-            artifact_name: quad-gif.exe
+            artifact_name: quad_gif.exe
             zip_file: quad-gif-windows.zip
             asset_name: quad-gif-windows-$tag.zip
             target: 'x86_64-pc-windows-msvc'
           - os: macos-latest
-            artifact_name: quad-gif
+            artifact_name: quad_gif
             zip_file: quad-gif-macos.zip
             asset_name: quad-gif-macos-$tag.zip
             target: 'x86_64-apple-darwin'
           - os: ubuntu-latest
-            artifact_name: quad-gif.wasm
+            artifact_name: quad_gif.wasm
             zip_file: quad-gif-wasm.zip
             asset_name: quad-gif-wasm-$tag.zip
             target: 'wasm32-unknown-unknown'
@@ -63,19 +63,13 @@ jobs:
         run: cargo build --release --all-targets --target=${{ matrix.config.target }}
       - name: Zip release archive
         if: matrix.config.target == 'wasm32-unknown-unknown'
-        run: |
-          ls -lR
-          zip --move -j ${{ matrix.config.zip_file }} demo/*.js demo/*.html target/${{ matrix.config.target }}/release/${{ matrix.config.artifact_name }}
+        run: zip --move -j ${{ matrix.config.zip_file }} target/${{ matrix.config.target }}/release/${{ matrix.config.artifact_name }}
       - name: Zip release archive
         if: matrix.config.target == 'x86_64-unknown-linux-gnu'
-        run: |
-          ls -lR
-          tar --remove-files -zcf ${{ matrix.config.zip_file }} -C target/${{ matrix.config.target }}/release/ ${{ matrix.config.artifact_name }}
+        run: tar --remove-files -zcf ${{ matrix.config.zip_file }} -C target/${{ matrix.config.target }}/release/ ${{ matrix.config.artifact_name }}
       - name: Zip release archive
         if: runner.os == 'Windows' || runner.os == 'macOS'
-        run: |
-          ls -lR
-          7z a -sdel -tzip ${{ matrix.config.zip_file }} ./target/${{ matrix.config.target }}/release/${{ matrix.config.artifact_name }}
+        run: 7z a -sdel -tzip ${{ matrix.config.zip_file }} ./target/${{ matrix.config.target }}/release/${{ matrix.config.artifact_name }}
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
@@ -94,10 +88,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: Swatinem/rust-cache@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
       - name: Publish release to crates.io
         uses: katyo/publish-crates@v1
         with:
