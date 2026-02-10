@@ -61,6 +61,18 @@ impl GifAnimation {
         Self::from_gif_bytes(&file_bytes)
     }
 
+    /// Load and decode a GIF file using Macroquad using the given FilterMode.
+    ///
+    /// Use `FilterMode::Nearest` if you need integer-ratio scaling for pixel art, for example.
+    ///
+    /// ```rust
+    /// let mut gif_animation = GifAnimation::load_with_filter_mode("filename.gif", FilterMode::Nearest).await;
+    /// ```
+    pub async fn load_with_filter_mode(filename: String, filter_mode: FilterMode) -> Self {
+        let file_bytes = load_file(&filename).await.expect("Couldn't load file");
+        Self::from_gif_bytes_with_filter_mode(&file_bytes, filter_mode)
+    }
+
     /// Instantiate a new `GifAnimation` from bytes.
     ///
     /// ```rust
@@ -68,11 +80,27 @@ impl GifAnimation {
     /// let mut gif_animation = GifAnimation::from_gif_bytes(&bytes);
     /// ```
     pub fn from_gif_bytes(file_bytes: &[u8]) -> GifAnimation {
-        let (frames, width, height) = Self::decode_gif(&file_bytes);
+        let (frames, width, height) = Self::decode_gif(&file_bytes, None);
         GifAnimation::new(frames, width, height)
     }
 
-    fn decode_gif(file: &[u8]) -> (Vec<AnimationFrame>, u16, u16) {
+    /// Instantiate a new `GifAnimation` from bytes using the given `FilterMode`.
+    ///
+    /// Use `FilterMode::Nearest` if you need integer-ratio scaling for pixel art, for example.
+    ///
+    /// ```rust
+    /// let bytes: [u8] = ...
+    /// let mut gif_animation = GifAnimation::from_gif_bytes(&bytes);
+    /// ```
+    pub fn from_gif_bytes_with_filter_mode(
+        file_bytes: &[u8],
+        filter_mode: FilterMode,
+    ) -> GifAnimation {
+        let (frames, width, height) = Self::decode_gif(&file_bytes, Some(filter_mode));
+        GifAnimation::new(frames, width, height)
+    }
+
+    fn decode_gif(file: &[u8], filter_mode: Option<FilterMode>) -> (Vec<AnimationFrame>, u16, u16) {
         let mut options = gif::DecodeOptions::new();
         options.set_color_output(gif::ColorOutput::Indexed);
         let mut decoder = options.read_info(&*file).unwrap();
@@ -82,12 +110,13 @@ impl GifAnimation {
         while let Some(frame) = decoder.read_next_frame().unwrap() {
             screen.blit_frame(&frame).expect("Couldn't blit frame");
             let (pixels, frame_width, frame_height) = screen.pixels.as_contiguous_buf();
+            let texture =
+                Texture2D::from_rgba8(frame_width as u16, frame_height as u16, pixels.as_bytes());
+            if let Some(fm) = filter_mode {
+                texture.set_filter(fm);
+            }
             frames.push(AnimationFrame {
-                texture: Texture2D::from_rgba8(
-                    frame_width as u16,
-                    frame_height as u16,
-                    pixels.as_bytes(),
-                ),
+                texture,
                 delay: frame.delay as f32 / 100.,
             });
         }

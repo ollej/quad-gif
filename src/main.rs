@@ -1,9 +1,7 @@
 #![windows_subsystem = "windows"]
+use clap::Parser;
 use macroquad::prelude::*;
 use quad_gif;
-use std::env;
-#[cfg(not(debug_assertions))]
-use std::process;
 
 fn window_conf() -> Conf {
     Conf {
@@ -13,37 +11,57 @@ fn window_conf() -> Conf {
     }
 }
 
-fn get_filename() -> String {
-    env::args().nth(1).unwrap_or_else(|| default_filename())
+/// Display a looping GIF animation
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+struct Args {
+    /// Which filter mode to use
+    #[arg(short, long, default_value = "linear")]
+    filter_mode: FilterModeExt,
+
+    /// Filename of the GIF
+    #[arg(default_value = "animation.gif")]
+    filename: String,
 }
 
-#[cfg(debug_assertions)]
-fn default_filename() -> String {
-    "animation.gif".to_string()
+#[derive(Clone, Debug)]
+pub struct FilterModeExt(FilterMode);
+
+impl Into<FilterMode> for FilterModeExt {
+    fn into(self) -> FilterMode {
+        self.0
+    }
 }
 
-#[cfg(not(debug_assertions))]
-fn default_filename() -> String {
-    explain_usage()
-}
+impl clap::ValueEnum for FilterModeExt {
+    fn value_variants<'a>() -> &'a [FilterModeExt] {
+        &[
+            FilterModeExt(FilterMode::Linear),
+            FilterModeExt(FilterMode::Nearest),
+        ]
+    }
 
-#[cfg(not(debug_assertions))]
-fn explain_usage() -> ! {
-    println!("Display a GIF file.\n\nUsage: quad-gif <file>");
-    process::exit(1)
+    fn to_possible_value(&self) -> Option<clap::builder::PossibleValue> {
+        match self.0 {
+            FilterMode::Linear => Some(clap::builder::PossibleValue::new("linear")),
+            FilterMode::Nearest => Some(clap::builder::PossibleValue::new("nearest")),
+        }
+    }
 }
 
 /// Binary to display a looping GIF animation.
 ///
 /// The filename is required, except in debug, where it defaults to `animation.gif`.
 ///
-/// quad-gif 0.2.0
+/// quad-gif 0.5.0
 /// Display a GIF file.
 ///
 /// Usage: quad-gif <file>
 #[macroquad::main(window_conf)]
 async fn main() {
-    let mut animation = quad_gif::GifAnimation::load(get_filename()).await;
+    let args = Args::parse();
+    let mut animation =
+        quad_gif::GifAnimation::load_with_filter_mode(args.filename, args.filter_mode.into()).await;
 
     loop {
         #[cfg(not(target_arch = "wasm32"))]

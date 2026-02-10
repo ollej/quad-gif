@@ -1,6 +1,6 @@
 [package]
 name = "quad-gif"
-version = "0.4.0"
+version = "0.5.0"
 edition = "2024"
 license = "MIT"
 description = "Display GIF animations with Macroquad."
@@ -15,6 +15,7 @@ macroquad = { version = "0.4", default-features = false }
 gif = "0.11.4"
 gif-dispose = "3.1.1"
 rgb = "0.8.34"
+clap = { version = "4.5.57", features = ["derive"] }
 
 [profile.dev]
 debug = 1 # less precise locations

@@ -14,10 +14,17 @@ the file.
 There is a binary file included that can be used to show a GIF file.
 
 ```
-quad_gif 0.4.0
-Display a GIF file.
+Display GIF animations with Macroquad.
 
-Usage: quad_gif <file>
+Usage: quad_gif [OPTIONS] [FILENAME]
+
+Arguments:
+  [FILENAME]  Filename of the GIF [default: animation.gif]
+
+Options:
+  -f, --filter-mode <FILTER_MODE>  Which filter mode to use [default: linear] [possible values: linear, nearest]
+  -h, --help                       Print help
+  -V, --version                    Print version
 ```
 
 ## API usage
@@ -43,7 +50,7 @@ async fn main() {
 
 ## License
 
-Copyright 2022 Olle Wreede, released under the MIT License.
+Copyright 2026 Olle Wreede, released under the MIT License.
 
 ## Attribution
 
